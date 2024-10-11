@@ -1,0 +1,22 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "description": "projet tw",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kibanker/projet-tw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kibanker/projet-tw/issues"
+  },
+  "homepage": "https://github.com/Kibanker/projet-tw#readme",
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
