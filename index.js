@@ -29,6 +29,10 @@ app.get('/', (req, res) => {
   res.status(200).send({ message: 'Serveur Express opérationnel !' });
 });
 
+app.post('/', (req, res) => {
+  res.status(201).send({ message: 'POST opérationnel !' });
+});
+
 // GET /elements Liste tous les éléments
 app.get('/elements', async (req, res) => {
   const elements = await Element.find({}, {"_id": 0, "__v": 0});
