@@ -1,0 +1,34 @@
+db.elements.deleteMany({})
+db.elements.find({}, {"_id":0, "__v":0})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find({}, {id: true, "_id": 0}).sort({_id: -1}).limit(1)
+db.elements.find({}, {id: true}).sort({_id: -1}).limit(1)
+db.elements.find().sort({_id: -1}).limit(1)
+db.elements.find().sort({_id: -1})
+db.elements.find().sort()
+db.elements.find().sort
+db.elements.findOne().sort({ _id: -1 });
+db.elements.findOne()
+db.elements.findOne().sort()
+db.elements.findOne().sort({ _id: -1 })
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+db.elements.deleteMany({})
+db.elements.find()
+elements.find()
+show elements
+show collections
+use projet-tw
+show dbs
