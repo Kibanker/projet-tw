@@ -15,14 +15,15 @@ app.use(express.json());
 
 // Ajouter des données par défaut après la connexion
 const initData = async () => {
+      await Element.deleteMany({}); 
       await Element.insertMany([
-          { name: 'Appartement T1', location: 'Paris' },
-          { name: 'Maison F4', location: 'Lyon' },
-          { name: 'Studio', location: 'Marseille' }
+          { id: 1, name: 'Appartement T1', location: 'Paris' },
+          { id: 2, name: 'Maison F4', location: 'Lyon' },
+          { id: 3, name: 'Studio', location: 'Marseille' }
       ]);
       console.log('Données initiales ajoutées');
 };
-//initData();
+initData();
 
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Serveur Express opérationnel !' });
@@ -36,7 +37,7 @@ app.get('/elements', async (req, res) => {
 
 // GET /elements/:id : Renvoie un élément par son ID
 app.get('/elements/:id', async (req, res) => {
-  const element = await Element.findById(req.params.id);
+  const element = await Element.find({id: req.params.id}, {"_id": 0, "__v": 0});
   if (!element) {
       return res.status(404).json({ message: 'Élément non trouvé' });
   }
@@ -46,19 +47,18 @@ app.get('/elements/:id', async (req, res) => {
 // POST /elements : Ajoute un nouvel élément
 app.post('/elements', async (req, res) => {
   try {
-     const lastElement = await Element.find().sort({ id: -1 }).limit(1);
-
-     const nextId = lastElement ? lastElement.id + 1 : 1;
 
     // Crée un nouvel élément avec l'ID incrémenté
     const newElement = new Element({
+      id: req.body.id,
       name: req.body.name,
       location: req.body.location,
   });
 
       await newElement.save();
       res.status(201).json(newElement);
-      //Element.insertOne(newElement);
+      Element.insertOne({newElement});
+      
   } catch (error) {
       res.status(400).json({ message: 'Erreur lors de la création', error });
   }
