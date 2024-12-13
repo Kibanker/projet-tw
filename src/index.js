@@ -1,4 +1,6 @@
 const express = require('express');
+const { engine } = require(express-handlebars);
+const routes = require('./routes');
 const PORT = 3000;
 
 const app = express();
