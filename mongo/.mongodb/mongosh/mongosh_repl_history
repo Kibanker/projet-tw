@@ -1,3 +1,4 @@
+db.elements.find({}, {"_id":0, "__v":0})
 db.elements.deleteMany({})
 db.elements.find({}, {"_id":0, "__v":0})
 db.elements.deleteMany({})

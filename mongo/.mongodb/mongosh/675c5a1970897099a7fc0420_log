@@ -112,3 +112,5 @@
 {"t":{"$date":"2024-12-13T17:10:16.934Z"},"s":"I","c":"MONGOSH","id":1000000011,"ctx":"shell-api","msg":"Performed API call","attr":{"method":"find","class":"Collection","db":"projet-tw","coll":"elements","arguments":{"query":{},"options":{"projection":{"_id":0,"__v":0}}}}}
 {"t":{"$date":"2024-12-13T17:10:34.601Z"},"s":"I","c":"MONGOSH","id":1000000007,"ctx":"repl","msg":"Evaluating input","attr":{"input":"db.elements.deleteMany({})"}}
 {"t":{"$date":"2024-12-13T17:10:34.606Z"},"s":"I","c":"MONGOSH","id":1000000011,"ctx":"shell-api","msg":"Performed API call","attr":{"method":"deleteMany","class":"Collection","db":"projet-tw","coll":"elements","arguments":{"filter":{},"options":{}}}}
+{"t":{"$date":"2024-12-13T17:17:50.557Z"},"s":"I","c":"MONGOSH","id":1000000007,"ctx":"repl","msg":"Evaluating input","attr":{"input":"db.elements.find({}, {\"_id\":0, \"__v\":0})"}}
+{"t":{"$date":"2024-12-13T17:17:50.562Z"},"s":"I","c":"MONGOSH","id":1000000011,"ctx":"shell-api","msg":"Performed API call","attr":{"method":"find","class":"Collection","db":"projet-tw","coll":"elements","arguments":{"query":{},"options":{"projection":{"_id":0,"__v":0}}}}}

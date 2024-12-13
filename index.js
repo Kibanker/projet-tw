@@ -23,7 +23,7 @@ const initData = async () => {
       ]);
       console.log('Données initiales ajoutées');
 };
-initData();
+//initData();
 
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Serveur Express opérationnel !' });
@@ -38,7 +38,7 @@ app.get('/elements', async (req, res) => {
 // GET /elements/:id : Renvoie un élément par son ID
 app.get('/elements/:id', async (req, res) => {
   const element = await Element.find({id: req.params.id}, {"_id": 0, "__v": 0});
-  if (!element) {
+  if (element.length === 0) {
       return res.status(404).json({ message: 'Élément non trouvé' });
   }
   res.status(200).json(element);
@@ -48,7 +48,7 @@ app.get('/elements/:id', async (req, res) => {
 app.post('/elements', async (req, res) => {
   try {
 
-    // Crée un nouvel élément avec l'ID incrémenté
+    // Crée un nouvel élément
     const newElement = new Element({
       id: req.body.id,
       name: req.body.name,
@@ -58,7 +58,7 @@ app.post('/elements', async (req, res) => {
       await newElement.save();
       res.status(201).json(newElement);
       Element.insertOne({newElement});
-      
+
   } catch (error) {
       res.status(400).json({ message: 'Erreur lors de la création', error });
   }
