@@ -64,6 +64,26 @@ app.post('/elements', async (req, res) => {
   }
 });
 
+// DELETE /elements/id : Supprime un élément
+app.delete('/elements/:id', async (req, res) => {
+  try {
+    const result = await Element.deleteOne({ id: req.params.id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Élément non trouvé' });
+    }
+
+    res.status(200).json({ message: 'Élément supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la suppression', error });
+  }
+});
+
+// Gérer les routes non trouvées
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Route non trouvée' });
+});
+
 app.listen(PORT, () => {
     console.log(`Serveur lancé sur http://localhost:${PORT}`)
   });
