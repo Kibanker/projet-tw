@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const Element = require('./models/element');
+module.exports = app;
+
 
 dotenv.config();
 
