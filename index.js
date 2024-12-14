@@ -15,15 +15,21 @@ app.use(express.json());
 
 // Ajouter des données par défaut après la connexion
 const initData = async () => {
-      await Element.deleteMany({}); 
+  try {
+      await Element.deleteMany({}); // Supprime les données existantes
       await Element.insertMany([
           { id: 1, name: 'Appartement T1', location: 'Paris' },
           { id: 2, name: 'Maison F4', location: 'Lyon' },
           { id: 3, name: 'Studio', location: 'Marseille' }
       ]);
       console.log('Données initiales ajoutées');
+  } catch (error) {
+      console.error('Erreur lors de l’ajout des données initiales :', error);
+  }
 };
-//initData();
+
+// Exécution de l’ajout des données une fois la connexion établie
+connectDB().then(initData);
 
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Serveur Express opérationnel !' });
