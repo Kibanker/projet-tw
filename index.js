@@ -2,123 +2,59 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const Element = require('./models/element');
-module.exports = app;
-
 
 dotenv.config();
 
-// connexion à la bdd
+// Connexion à la base de données
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
 
 // Ajouter des données par défaut après la connexion
 const initData = async () => {
-  try {
-      await Element.deleteMany({}); // Supprime les données existantes
-      await Element.insertMany([
-          { id: 1, name: 'Appartement T1', location: 'Paris' },
-          { id: 2, name: 'Maison F4', location: 'Lyon' },
-          { id: 3, name: 'Studio', location: 'Marseille' }
-      ]);
-      console.log('Données initiales ajoutées');
-  } catch (error) {
-      console.error('Erreur lors de l’ajout des données initiales :', error);
-  }
+    try {
+        await Element.deleteMany({});
+        await Element.insertMany([
+            { id: 1, name: 'Appartement T1', location: 'Paris' },
+            { id: 2, name: 'Maison F4', location: 'Lyon' },
+            { id: 3, name: 'Studio', location: 'Marseille' }
+        ]);
+        console.log('Données initiales ajoutées');
+    } catch (error) {
+        console.error('Erreur lors de l’ajout des données initiales :', error);
+    }
 };
 
 // Exécution de l’ajout des données une fois la connexion établie
 connectDB().then(initData);
 
 app.get('/', (req, res) => {
-  res.status(200).send({ message: 'Serveur Express opérationnel !' });
+    res.status(200).send({ message: 'Serveur Express opérationnel !' });
 });
 
-app.post('/', (req, res) => {
-  res.status(201).send({ message: 'POST opérationnel !' });
-});
-
-// GET /elements Liste tous les éléments
+// Routes pour /elements
 app.get('/elements', async (req, res) => {
-  const elements = await Element.find({}, {"_id": 0, "__v": 0});
-  res.status(200).json(elements);
+    try {
+        const elements = await Element.find({}, { "_id": 0, "__v": 0 });
+        res.status(200).json(elements);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des éléments', error });
+    }
 });
 
-// GET /elements/:id : Renvoie un élément par son ID
-app.get('/elements/:id', async (req, res) => {
-  const element = await Element.find({id: req.params.id}, {"_id": 0, "__v": 0});
-  if (element.length === 0) {
-      return res.status(404).json({ message: 'Élément non trouvé' });
-  }
-  res.status(200).json(element);
-});
-
-// POST /elements : Ajoute un nouvel élément
 app.post('/elements', async (req, res) => {
-  try {
-
-    // Crée un nouvel élément
-    const newElement = new Element({
-      id: req.body.id,
-      name: req.body.name,
-      location: req.body.location,
-  });
-
-      await newElement.save();
-      res.status(201).json(newElement);
-      Element.insertOne({newElement});
-
-  } catch (error) {
-      res.status(400).json({ message: 'Erreur lors de la création', error });
-  }
-});
-
-// PUT /element/:id qui modifie un enregistrement à partir de son id
-app.put('/elements/:id', async (req, res) => {
-  try {
-    const { id } = req.params; // Récupère l'ID de l'élément à mettre à jour
-    const { name, location } = req.body; // Récupère les nouvelles données pour l'élément
-
-    // Recherche et mise à jour de l'élément
-    const updatedElement = await Element.findOneAndUpdate(
-      { id }, // Critère de recherche basé sur l'ID
-      { name, location }, // Les nouvelles données
-      { new: true } // Retourne le document mis à jour
-    );
-
-    if (!updatedElement) {
-      return res.status(404).json({ message: 'Élément non trouvé' });
+    try {
+        const nouvelElement = new Element({
+            id: req.body.id,
+            name: req.body.name,
+            location: req.body.location,
+        });
+        await nouvelElement.save();
+        res.status(201).json(nouvelElement);
+    } catch (error) {
+        res.status(400).json({ message: 'Erreur lors de la création', error });
     }
-
-    res.status(200).json(updatedElement); // Envoie l'élément mis à jour
-  } catch (error) {
-    res.status(400).json({ message: 'Erreur lors de la mise à jour', error });
-  }
 });
 
-// DELETE /elements/id : Supprime un élément
-app.delete('/elements/:id', async (req, res) => {
-  try {
-    const result = await Element.deleteOne({ id: req.params.id });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'Élément non trouvé' });
-    }
-
-    res.status(200).json({ message: 'Élément supprimé avec succès' });
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la suppression', error });
-  }
-});
-
-// Gérer les routes non trouvées
-app.use((req, res, next) => {
-  res.status(404).json({ message: 'Route non trouvée' });
-});
-
-app.listen(PORT, () => {
-    console.log(`Serveur lancé sur http://localhost:${PORT}`)
-  });
+module.exports = app;
