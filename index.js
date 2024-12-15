@@ -107,6 +107,41 @@ app.post('/elements', async (req, res) => {
     }
 });
 
+app.put('/elements/:id', async (req, res) => {
+    try {
+      const { id } = req.params; // Récupère l'ID de l'élément à mettre à jour
+      const { name, location } = req.body; // Récupère les nouvelles données pour l'élément
+      // Recherche et mise à jour de l'élément
+      const updatedElement = await Element.findOneAndUpdate(
+        { id }, // Critère de recherche basé sur l'ID
+        { name, location }, // Les nouvelles données
+        { new: true } // Retourne le document mis à jour
+      );
+      if (!updatedElement) {
+        return res.status(404).json({ message: 'Élément non trouvé' });
+      }
+      res.status(200).json(updatedElement); // Envoie l'élément mis à jour
+    } catch (error) {
+      res.status(400).json({ message: 'Erreur lors de la mise à jour', error });
+    }
+  });
+
+  
+  // DELETE /elements/id : Supprime un élément
+  app.delete('/elements/:id', async (req, res) => {
+    try {
+      const result = await Element.deleteOne({ id: req.params.id });
+  
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: 'Élément non trouvé' });
+      }
+  
+      res.status(200).json({ message: 'Élément supprimé avec succès' });
+    } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression', error });
+    }
+  });
+
 const PORT = process.env.PORT || 3000;
 
 // Gérer les routes non trouvées
