@@ -48,6 +48,10 @@ app.get('/', (req, res) => {
   res.status(200).render('home', { message: 'Serveur Express opérationnel !' }); // Affiche la page d'accueil
 });
 
+app.post('/', (req, res) => {
+  res.status(201).send({ message: 'POST opérationnel !' });
+});
+
 // Route pour afficher le formulaire de création d'utilisateur
 app.get('/create-user', (req, res) => {
   res.render('create-user'); // Affiche la vue pour créer un utilisateur
@@ -105,6 +109,15 @@ app.post('/elements', async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: 'Erreur lors de la création', error });
     }
+});
+
+// GET /elements/:id : Renvoie un élément par son ID
+app.get('/elements/:id', async (req, res) => {
+  const element = await Element.find({id: req.params.id}, {"_id": 0, "__v": 0});
+  if (!element) {
+      return res.status(404).json({ message: 'Élément non trouvé' });
+  }
+  res.status(200).json(element);
 });
 
 
