@@ -184,7 +184,9 @@ app.get('/elements/:id', async (req, res) => {
   if (!element) {
       return res.status(404).json({ message: 'Élément non trouvé' });
   }
-  res.status(200).json(element);
+  res.render('elements', {
+    elements: element // Ici, elements doit être un tableau d'objets simples
+});
 });
 
 
