@@ -213,3 +213,43 @@ button {
 .btn-secondary:hover {
     background-color: #5a6268;
 }
+
+/* Page des éléments */
+.elements-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.element-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.element-item h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+}
+
+.element-item p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.element-item button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.element-item button:hover {
+    background-color: #0056b3;
+}

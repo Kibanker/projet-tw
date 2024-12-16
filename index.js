@@ -20,7 +20,10 @@ const app = express();
 // Configuration du moteur de vue Handlebars
 app.engine('handlebars', engine({
   defaultLayout: 'main',
-  layoutsDir: path.join(__dirname, 'views', 'layouts')
+  layoutsDir: path.join(__dirname, 'views', 'layouts'),
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true, // Désactive l'avertissement
+  }
 }));
 app.set('view engine', 'handlebars');
 
@@ -66,10 +69,11 @@ connectDB().then(initData);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Page d'accueil
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+  const elements = await Element.find({}, { "_id": 0, "__v": 0 });
   res.render('home', {
       message: 'Bienvenue sur le site !',
-      username: res.locals.username // Passe l'état de connexion au template
+      username: res.locals.username,
   });
 });
 
@@ -147,13 +151,18 @@ app.post('/login', async (req, res) => {
 
 // Routes pour /elements
 app.get('/elements', async (req, res) => {
-    try {
-        const elements = await Element.find({}, { "_id": 0, "__v": 0 });
-        res.status(200).json(elements);
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la récupération des éléments', error });
-    }
+  try {
+      const elements = await Element.find({}, { "_id": 0, "__v": 0 });
+
+      // Passer les éléments sous un objet avec un nom (par exemple 'elements')
+      res.render('elements', {
+          elements: elements // Ici, elements doit être un tableau d'objets simples
+      });
+  } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération des éléments', error });
+  }
 });
+
 
 app.post('/elements', async (req, res) => {
     try {
@@ -181,39 +190,39 @@ app.get('/elements/:id', async (req, res) => {
 
 // PUT /element/:id qui modifie un enregistrement à partir de son id
 app.put('/elements/:id', async (req, res) => {
-    try {
-      const { id } = req.params; // Récupère l'ID de l'élément à mettre à jour
-      const { name, location } = req.body; // Récupère les nouvelles données pour l'élément
-      // Recherche et mise à jour de l'élément
-      const updatedElement = await Element.findOneAndUpdate(
-        { id }, // Critère de recherche basé sur l'ID
-        { name, location }, // Les nouvelles données
-        { new: true } // Retourne le document mis à jour
-      );
-      if (!updatedElement) {
-        return res.status(404).json({ message: 'Élément non trouvé' });
-      }
-      res.status(200).json(updatedElement); // Envoie l'élément mis à jour
-    } catch (error) {
-      res.status(400).json({ message: 'Erreur lors de la mise à jour', error });
+  try {
+    const { id } = req.params; // Récupère l'ID de l'élément à mettre à jour
+    const { name, location } = req.body; // Récupère les nouvelles données pour l'élément
+    // Recherche et mise à jour de l'élément
+    const updatedElement = await Element.findOneAndUpdate(
+      { id }, // Critère de recherche basé sur l'ID
+      { name, location }, // Les nouvelles données
+      { new: true } // Retourne le document mis à jour
+    );
+    if (!updatedElement) {
+      return res.status(404).json({ message: 'Élément non trouvé' });
     }
-  });
+    res.status(200).json(updatedElement); // Envoie l'élément mis à jour
+  } catch (error) {
+    res.status(400).json({ message: 'Erreur lors de la mise à jour', error });
+  }
+});
 
 
-  // DELETE /elements/id : Supprime un élément
-  app.delete('/elements/:id', async (req, res) => {
-    try {
-      const result = await Element.deleteOne({ id: req.params.id });
+// DELETE /elements/id : Supprime un élément
+app.delete('/elements/:id', async (req, res) => {
+  try {
+    const result = await Element.deleteOne({ id: req.params.id });
   
-      if (result.deletedCount === 0) {
-        return res.status(404).json({ message: 'Élément non trouvé' });
-      }
-  
-      res.status(200).json({ message: 'Élément supprimé avec succès' });
-    } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la suppression', error });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Élément non trouvé' });
     }
-  });
+  
+    res.status(200).json({ message: 'Élément supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la suppression', error });
+  }
+});
 
 // Route de déconnexion
 app.get('/logout', (req, res) => {
