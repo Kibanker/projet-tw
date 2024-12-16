@@ -107,6 +107,8 @@ app.post('/elements', async (req, res) => {
     }
 });
 
+
+// PUT /element/:id qui modifie un enregistrement à partir de son id
 app.put('/elements/:id', async (req, res) => {
     try {
       const { id } = req.params; // Récupère l'ID de l'élément à mettre à jour
@@ -126,7 +128,7 @@ app.put('/elements/:id', async (req, res) => {
     }
   });
 
-  
+
   // DELETE /elements/id : Supprime un élément
   app.delete('/elements/:id', async (req, res) => {
     try {
