@@ -60,31 +60,32 @@ app.get('/create-user', (req, res) => {
 // Route pour gérer l'envoi du formulaire de création d'utilisateur
 app.post('/users', async (req, res) => {
   try {
-      const { username, password } = req.body;
+    const { username, password } = req.body;
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-          return res.status(400).json({ message: 'Nom d\'utilisateur déjà pris' });
-      }
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).render('create-user', { error: 'Nom d\'utilisateur déjà pris' });
+    }
 
-      // Hacher le mot de passe
-      const hashedPassword = await bcrypt.hash(password, 10);
+    // Hacher le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Créer le nouvel utilisateur
-      const newUser = new User({
-          username,
-          password: hashedPassword
-      });
+    // Créer le nouvel utilisateur
+    const newUser = new User({
+      username,
+      password: hashedPassword
+    });
 
-      await newUser.save();
-      res.status(201).json({ message: 'Utilisateur créé avec succès', user: newUser });
-      // Rediriger vers la page d'accueil après la création
-      res.redirect('/');
+    await newUser.save();
+
+    // Rediriger vers la page de connexion après création
+    res.redirect('/login');
   } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur', error });
+    res.status(500).render('create-user', { error: 'Erreur lors de la création de l\'utilisateur' });
   }
 });
+
 
 
 // Routes pour /elements
@@ -157,6 +158,43 @@ app.put('/elements/:id', async (req, res) => {
     }
   });
 
+  // Route pour afficher la page de connexion
+app.get('/login', (req, res) => {
+  res.render('login'); // Affiche la vue de connexion
+});
+
+  // Route pour afficher la page de connexion
+app.get('/account', (req, res) => {
+  res.render('account'); // Affiche la vue de connexion
+});
+  
+
+// Route pour gérer la soumission du formulaire de connexion
+app.post('/login', async (req, res) => {
+  try {
+      const { username, password } = req.body;
+
+      // Vérifier si l'utilisateur existe
+      const user = await User.findOne({ username });
+      if (!user) {
+          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
+      }
+
+      // Vérifier le mot de passe
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
+      }
+
+      // Connexion réussie - Rediriger avec stockage côté client
+      res.status(200).render('account', { username: user.username });
+  } catch (error) {
+      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
+  }
+});
+
+
+
 const PORT = process.env.PORT || 3000;
 
 // Gérer les routes non trouvées
@@ -167,7 +205,6 @@ app.use((req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
-
 
 module.exports = app;
 
