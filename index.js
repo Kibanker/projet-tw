@@ -4,12 +4,14 @@ const connectDB = require('./config/database');
 const Element = require('./models/element');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const { engine } = require('express-handlebars');
 
-
-
 dotenv.config();
+
+const SECRET_KEY = process.env.SECRET_KEY || 'votre_cle_secrete';
 
 connectDB();
 
@@ -24,6 +26,25 @@ app.set('view engine', 'handlebars');
 
 app.use(express.urlencoded({ extended: true })); // Pour parser les données des formulaires HTML
 app.use(express.json());
+app.use(cookieParser()); // Pour gérer les cookies
+
+const authenticate = (req, res, next) => {
+  const token = req.cookies.auth_token; // Vérifie si le cookie existe
+  if (token) {
+      try {
+          const decoded = jwt.verify(token, SECRET_KEY); // Décode le jeton
+          res.locals.username = decoded.username; // Injecte le nom d'utilisateur dans les variables locales
+      } catch (error) {
+          res.locals.username = null; // En cas de jeton invalide, utilisateur non connecté
+      }
+  } else {
+      res.locals.username = null; // Pas de jeton, utilisateur non connecté
+  }
+  next(); // Continue l'exécution
+};
+
+app.use(authenticate);
+
 
 // Ajouter des données par défaut pour les éléments
 const initData = async () => {
@@ -44,48 +65,84 @@ connectDB().then(initData);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Page d'accueil
 app.get('/', (req, res) => {
-  res.status(200).render('home', { message: 'Serveur Express opérationnel !' }); // Affiche la page d'accueil
+  res.render('home', {
+      message: 'Bienvenue sur le site !',
+      username: res.locals.username // Passe l'état de connexion au template
+  });
 });
 
-app.post('/', (req, res) => {
-  res.status(201).send({ message: 'POST opérationnel !' });
+// Page de connexion
+app.get('/login', (req, res) => {
+  res.render('login');
 });
 
-// Route pour afficher le formulaire de création d'utilisateur
-app.get('/create-user', (req, res) => {
-  res.render('create-user'); // Affiche la vue pour créer un utilisateur
-});
-
-// Route pour gérer l'envoi du formulaire de création d'utilisateur
-app.post('/users', async (req, res) => {
+// Soumission du formulaire de connexion
+app.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+      const { username, password } = req.body;
 
-    // Vérifier si l'utilisateur existe déjà
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).render('create-user', { error: 'Nom d\'utilisateur déjà pris' });
-    }
+      // Vérifie si l'utilisateur existe
+      const user = await User.findOne({ username });
+      if (!user) {
+          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
+      }
 
-    // Hacher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
+      // Vérifie le mot de passe
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
+      }
 
-    // Créer le nouvel utilisateur
-    const newUser = new User({
-      username,
-      password: hashedPassword
-    });
+      // Génère un jeton JWT
+      const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
 
-    await newUser.save();
-
-    // Rediriger vers la page de connexion après création
-    res.redirect('/login');
+      // Envoie le jeton via un cookie
+      res.cookie('auth_token', token, { httpOnly: true });
+      res.redirect('/account');
   } catch (error) {
-    res.status(500).render('create-user', { error: 'Erreur lors de la création de l\'utilisateur' });
+      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
   }
 });
 
+// Page de compte utilisateur
+app.get('/account', authenticate, (req, res) => {
+  res.render('account', { username: res.locals.username });
+});
+
+// Page pour créer un utilisateur
+app.get('/create-user', (req, res) => {
+  res.render('create-user');
+});
+
+// Soumission du formulaire de connexion
+app.post('/login', async (req, res) => {
+  try {
+      const { username, password } = req.body;
+
+      // Vérifie si l'utilisateur existe
+      const user = await User.findOne({ username });
+      if (!user) {
+          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
+      }
+
+      // Vérifie le mot de passe
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
+      }
+
+      // Génère un jeton JWT
+      const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+
+      // Envoie le jeton via un cookie
+      res.cookie('auth_token', token, { httpOnly: true });
+      res.redirect('/account');
+  } catch (error) {
+      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
+  }
+});
 
 
 // Routes pour /elements
@@ -158,53 +215,21 @@ app.put('/elements/:id', async (req, res) => {
     }
   });
 
-  // Route pour afficher la page de connexion
-app.get('/login', (req, res) => {
-  res.render('login'); // Affiche la vue de connexion
+// Route de déconnexion
+app.get('/logout', (req, res) => {
+  res.clearCookie('auth_token'); // Supprime le cookie contenant le JWT
+  res.redirect('/'); // Redirige vers la page d'accueil
 });
-
-  // Route pour afficher la page de connexion
-app.get('/account', (req, res) => {
-  res.render('account'); // Affiche la vue de connexion
-});
-  
-
-// Route pour gérer la soumission du formulaire de connexion
-app.post('/login', async (req, res) => {
-  try {
-      const { username, password } = req.body;
-
-      // Vérifier si l'utilisateur existe
-      const user = await User.findOne({ username });
-      if (!user) {
-          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
-      }
-
-      // Vérifier le mot de passe
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
-      }
-
-      // Connexion réussie - Rediriger avec stockage côté client
-      res.status(200).render('account', { username: user.username });
-  } catch (error) {
-      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
-  }
-});
-
-
 
 const PORT = process.env.PORT || 3000;
 
 // Gérer les routes non trouvées
 app.use((req, res, next) => {
-    res.status(404).json({ message: 'Route non trouvée' });
+  res.status(404).json({ message: 'Route non trouvée' });
 });
 
 app.listen(PORT, () => {
-    console.log(`Serveur lancé sur http://localhost:${PORT}`);
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
 
 module.exports = app;
-

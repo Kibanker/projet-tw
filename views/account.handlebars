@@ -9,7 +9,7 @@
 <body>
     <div class="account-container">
         <h1>Bienvenue sur votre compte</h1>
-        <p>Vous êtes connecté en tant que <span id="username"></span>.</p>
+        <p>Vous êtes connecté en tant que <span>{{username}}</span>.</p>
 
         <div class="actions">
             <a href="/">
@@ -17,13 +17,5 @@
             </a>
         </div>
     </div>
-
-    <script>
-    // Initialisation de sessionStorage avec l'utilisateur actuel
-    const username = '{{username}}'; // Rempli côté serveur
-    if (username) {
-        sessionStorage.setItem('username', username);
-    }
-</script>
 </body>
 </html>

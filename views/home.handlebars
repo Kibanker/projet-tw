@@ -1,4 +1,22 @@
-{{!-- Page d'accueil --}}
 <div class="home">
     <h2>{{message}}</h2>
+
+    {{!-- Si l'utilisateur est connecté --}}
+    {{#if username}}
+        <p>Bienvenue, {{username}} !</p>
+        <a href="/account">
+            <button class="btn-primary">Mon compte</button>
+        </a>
+        <a href="/logout">
+            <button class="btn-secondary">Se déconnecter</button>
+        </a>
+    {{!-- Si l'utilisateur n'est pas connecté --}}
+    {{else}}
+        <a href="/login">
+            <button class="btn-secondary">Se connecter</button>
+        </a>
+        <a href="/create-user">
+            <button class="btn-secondary">S'inscrire</button>
+        </a>
+    {{/if}}
 </div>
