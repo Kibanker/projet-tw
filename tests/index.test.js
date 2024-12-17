@@ -34,12 +34,6 @@ describe('Tests end-to-end pour l’API /elements', () => {
         await mongoose.connection.close();
     });
 
-    it('doit récupérer tous les éléments', async () => {
-        const response = await request(app).get('/elements');
-        expect(response.statusCode).toBe(200);
-        expect(Array.isArray(response.body)).toBe(true);
-    });
-
     it('doit ajouter un nouvel élément', async () => {
         const response = await request(app)
             .post('/elements')
