@@ -52,7 +52,6 @@ app.use(authenticate);
 // Ajouter des données par défaut pour les éléments
 const initData = async () => {
     try {
-        await User.deleteMany({});
         await Element.deleteMany({});
         await Element.insertMany([
             { id: 1, name: 'Appartement T1', location: 'Paris' },
