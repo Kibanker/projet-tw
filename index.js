@@ -70,7 +70,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Page d'accueil
 app.get('/', async (req, res) => {
-  const elements = await Element.find({}, { "_id": 0, "__v": 0 });
   res.render('home', {
       message: 'Bienvenue sur le site !',
       username: res.locals.username,
