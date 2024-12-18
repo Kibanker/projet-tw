@@ -89,14 +89,14 @@ app.post('/login', async (req, res) => {
       // Vérifie si l'utilisateur existe
       const user = await User.findOne({ username });
       if (!user) {
-          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
+          return res.status(401).json('login', { error: 'Utilisateur non trouvé' });
       }
 
       // Vérifie le mot de passe
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
+          return res.status(401).json('login', { error: 'Mot de passe incorrect' });
       }
 
       // Génère un jeton JWT
@@ -106,7 +106,7 @@ app.post('/login', async (req, res) => {
       res.cookie('auth_token', token, { httpOnly: true });
       res.redirect('/account');
   } catch (error) {
-      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
+      res.status(500).json('login', { error: 'Erreur lors de la connexion' });
   }
 });
 
@@ -122,14 +122,15 @@ app.post('/create-user',async (req, res) => {
     //on vérifie si l'utilisateur n'est pas déjà présent dans la base
     const leUser = await User.findOne({ username })
     if (leUser) {
-      return res.status(401).render('create-user', { error: 'Utilisateur déjà existant' });
+      return res.status(401).json({ error: 'Utilisateur déjà existant' });
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await User.create({ username: username, password: hashedPassword });
-      res.status(200).render('create-user', { reussite: 'Inscription confirmée' });
+      const user = await User.create({ username: username, password: hashedPassword });
+      res.status(200).json(user);
+      res.status(200).json({ reussite: 'Inscription confirmée' });
     } 
 } catch (error) {
-  res.status(500).render('create-user', { error: "Erreur lors de l'inscription" });
+  res.status(500).json( {error: "Erreur lors de l'inscription" });
 }
 });
 
@@ -141,6 +142,7 @@ app.get('/users', async (req, res) => {
       res.render('users', { 
           users: utilisateurs // Passe les utilisateurs récupérés à la vue
       });
+      res.status(200).json({utilisateurs});
   } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs :", error);
       res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
@@ -161,6 +163,7 @@ app.get('/elements', async (req, res) => {
       res.render('elements', {
           elements: elements // Ici, elements doit être un tableau d'objets simples
       });
+      res.status(200).json({elements});
   } catch (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des éléments', error });
   }
@@ -189,7 +192,8 @@ app.get('/elements/:id', async (req, res) => {
   }
   res.render('elements', {
     elements: element // Ici, elements doit être un tableau d'objets simples
-});
+  });
+  res.status(200).json({element});
 });
 
 
