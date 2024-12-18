@@ -70,7 +70,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Page d'accueil
 app.get('/', async (req, res) => {
-  res.render('home', {
+  res.status(200).json({
       message: 'Bienvenue sur le site !',
       username: res.locals.username,
   });
@@ -78,7 +78,7 @@ app.get('/', async (req, res) => {
 
 // Page de connexion
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.status(200).json({ message : 'Page connexion'});
 });
 
 // Soumission du formulaire de connexion

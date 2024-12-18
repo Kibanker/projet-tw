@@ -15,9 +15,11 @@ describe('Tests unitaires pour le modèle Element', () => {
     });
 
     it('doit sauvegarder un nouvel élément', async () => {
-        const nouvelElement = new Element({ id: 1, name: 'Test Element', location: 'Test Location' });
+        const nouvelElement = new Element({ id: 0, name: 'Test Element', location: 'Test Location' });
         const elementSauvegarde = await nouvelElement.save();
-        expect(elementSauvegarde.id).toBe(1);
+        expect(elementSauvegarde.id).toBe(0);
+        expect(elementSauvegarde.name).toBe('Test Element');
+        expect(elementSauvegarde.location).toBe('Test Location');
     });
 });
 
