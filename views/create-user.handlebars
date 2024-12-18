@@ -2,7 +2,15 @@
 <div class="create-user">
     <h1>Créer un utilisateur</h1>
 
-    <form action="/users" method="POST" class="form">
+    {{#if error}}
+        <p class="error">{{error}}</p>
+    {{/if}}
+
+    {{#if reussite}}
+        <p class="reussite">{{reussite}}</p>
+    {{/if}}
+
+    <form action="/create-user" method="POST" class="form">
         <div class="form-group">
             <label for="username">Nom d'utilisateur :</label>
             <input type="text" id="username" name="username" required>

@@ -52,6 +52,7 @@ app.use(authenticate);
 // Ajouter des données par défaut pour les éléments
 const initData = async () => {
     try {
+        await User.deleteMany({});
         await Element.deleteMany({});
         await Element.insertMany([
             { id: 1, name: 'Appartement T1', location: 'Paris' },
@@ -94,6 +95,7 @@ app.post('/login', async (req, res) => {
       }
 
       // Vérifie le mot de passe
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
           return res.status(401).render('login', { error: 'Mot de passe incorrect' });
@@ -108,11 +110,6 @@ app.post('/login', async (req, res) => {
   } catch (error) {
       res.status(500).render('login', { error: 'Erreur lors de la connexion' });
   }
-});
-
-// Page de compte utilisateur
-app.get('/account', authenticate, (req, res) => {
-  res.render('account', { username: res.locals.username });
 });
 
 // Page pour créer un utilisateur
@@ -120,34 +117,42 @@ app.get('/create-user', (req, res) => {
   res.render('create-user');
 });
 
-// Soumission du formulaire de connexion
-app.post('/login', async (req, res) => {
+// formulaire pour créer un utilisateur
+app.post('/create-user',async (req, res) => {
   try {
-      const { username, password } = req.body;
+    const { username, password } = req.body;
+    //on vérifie si l'utilisateur n'est pas déjà présent dans la base
+    const leUser = await User.findOne({ username })
+    if (leUser) {
+      return res.status(401).render('create-user', { error: 'Utilisateur déjà existant' });
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await User.create({ username: username, password: hashedPassword });
+      res.status(401).render('create-user', { reussite: 'Inscription confirmée' });
+    } 
+} catch (error) {
+  res.status(500).render('create-user', { error: "Erreur lors de l'inscription" });
+}
+});
 
-      // Vérifie si l'utilisateur existe
-      const user = await User.findOne({ username });
-      if (!user) {
-          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
-      }
-
-      // Vérifie le mot de passe
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
-      }
-
-      // Génère un jeton JWT
-      const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
-
-      // Envoie le jeton via un cookie
-      res.cookie('auth_token', token, { httpOnly: true });
-      res.redirect('/account');
+// Route temporaire pour afficher les utilisateurs
+app.get('/users', async (req, res) => {
+  try {
+      const utilisateurs = await User.find({}); // Récupère tous les utilisateurs
+      console.log(utilisateurs); // Pour vérifier les données récupérées
+      res.render('users', { 
+          users: utilisateurs // Passe les utilisateurs récupérés à la vue
+      });
   } catch (error) {
-      res.status(500).render('login', { error: 'Erreur lors de la connexion' });
+      console.error("Erreur lors de la récupération des utilisateurs :", error);
+      res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
   }
 });
 
+// Page de compte utilisateur
+app.get('/account', authenticate, (req, res) => {
+  res.render('account', { username: res.locals.username });
+});
 
 // Routes pour /elements
 app.get('/elements', async (req, res) => {
@@ -235,6 +240,7 @@ app.get('/logout', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 // Gérer les routes non trouvées
+
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route non trouvée' });
 });

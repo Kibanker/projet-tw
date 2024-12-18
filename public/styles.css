@@ -162,6 +162,15 @@ button {
     border-radius: 5px;
 }
 
+.reussite{
+    color: green;
+    background-color: #e0ffe0;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid green;
+    border-radius: 5px;
+}
+
 .form {
     display: flex;
     flex-direction: column;
