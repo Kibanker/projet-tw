@@ -127,7 +127,7 @@ app.post('/create-user',async (req, res) => {
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       await User.create({ username: username, password: hashedPassword });
-      res.status(401).render('create-user', { reussite: 'Inscription confirmée' });
+      res.status(200).render('create-user', { reussite: 'Inscription confirmée' });
     } 
 } catch (error) {
   res.status(500).render('create-user', { error: "Erreur lors de l'inscription" });
