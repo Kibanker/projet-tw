@@ -70,7 +70,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Page d'accueil
 app.get('/', async (req, res) => {
-  res.status(200).json({
+  res.status(200).render('home' ,{
       message: 'Bienvenue sur le site !',
       username: res.locals.username,
   });
@@ -78,7 +78,7 @@ app.get('/', async (req, res) => {
 
 // Page de connexion
 app.get('/login', (req, res) => {
-  res.status(200).json({ message : 'Page connexion'});
+  res.status(200).render('login' , { message : 'Page connexion'});
 });
 
 // Soumission du formulaire de connexion
@@ -89,14 +89,14 @@ app.post('/login', async (req, res) => {
       // Vérifie si l'utilisateur existe
       const user = await User.findOne({ username });
       if (!user) {
-          return res.status(401).json('login', { error: 'Utilisateur non trouvé' });
+          return res.status(401).render('login', { error: 'Utilisateur non trouvé' });
       }
 
       // Vérifie le mot de passe
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-          return res.status(401).json('login', { error: 'Mot de passe incorrect' });
+          return res.status(401).render('login', { error: 'Mot de passe incorrect' });
       }
 
       // Génère un jeton JWT
@@ -126,8 +126,7 @@ app.post('/create-user',async (req, res) => {
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await User.create({ username: username, password: hashedPassword });
-      res.status(200).json(user);
-      res.status(200).json({ reussite: 'Inscription confirmée' });
+      res.status(200).render('create-user', { reussite: 'Inscription confirmée' });
     } 
 } catch (error) {
   res.status(500).json( {error: "Erreur lors de l'inscription" });
