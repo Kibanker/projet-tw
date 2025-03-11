@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Styles généraux */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+body {
+  background-color: #f4f4f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header */
+.header {
+  background-color: #007bff;
+  padding: 20px 0;
+  color: white;
+}
+
+.header h1 {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.header nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.header nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.header nav a:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+  background-color: #007bff;
+  padding: 10px 0;
+  color: white;
+  text-align: center;
+}
+
+/* Conteneur principal */
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* Boutons */
+button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Home */
+.home {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.home h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.home .btn-primary {
+  margin-top: 20px;
+}
+
+/* Formulaire */
+.create-user {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.create-user h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form button {
+  margin-top: 20px;
+}
+
+/* Page de connexion */
+.login-page {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.login-page h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.error {
+  color: red;
+  background-color: #ffe0e0;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+.reussite{
+  color: green;
+  background-color: #e0ffe0;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid green;
+  border-radius: 5px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 10px;
+  width: 100%;
+  margin-top: 5px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Page des éléments */
+.elements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.element-item {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.element-item h3 {
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.element-item p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.element-item button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.element-item button:hover {
+  background-color: #0056b3;
+}
