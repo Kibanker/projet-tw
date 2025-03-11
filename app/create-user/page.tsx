@@ -1,35 +1,59 @@
-interface CreateUserProprietes {
-    error?: string;
-    reussite?: string;
-  }
-  
-  export default function CreateUser({ error, reussite }: CreateUserProprietes) {
+"use client";
+ 
+import { useState, useTransition } from "react";
+import { createUser } from "@/app/create-user/create-user";
+import { useRouter } from "next/navigation";
+ 
+export default function create_user_page() {
+    const [feedback, setFeedback] = useState<string | null | undefined>(null);
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter()
+ 
+    // Nous utilisons la Server Action directement dans le formulaire.
+    // Next.js 14+ gère automatiquement la conversion du FormData en appel serveur.
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+ 
+        // Démarrer la transition pour éviter de bloquer l'UI
+        startTransition(async () => {
+            // Appel direct de la Server Action via l'attribut "action"
+            const result = await createUser(new FormData(event.currentTarget));
+            if (result?.success) {
+                setFeedback(result.success);
+                router.refresh();
+            } else {
+                setFeedback(result.error);
+            }
+        });
+    }
+ 
     return (
-      <div className="create-user">
-        <h1>Créer un utilisateur</h1>
-  
-        {error && <p className="error">{error}</p>}
-  
-        {reussite && <p className="reussite">{reussite}</p>}
-  
-        <form action="/create-user" method="POST" className="form">
-          <div className="form-group">
-            <label htmlFor="username">Nom d'utilisateur :</label>
-            <input type="text" id="username" name="username" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" required />
-          </div>
-          <button type="submit" className="btn-primary">
-            Créer l'utilisateur
-          </button>
-        </form>
-  
-        <a href="/">
-          <button className="btn-secondary">Retour à l'accueil</button>
-        </a>
-      </div>
+        <div className="max-w-lg mx-auto p-6 border rounded-lg shadow-lg">
+            <h1 className="text-xl font-bold mb-4">Entrez vos Informations :</h1>
+            <form onSubmit={handleSubmit} className="space-y-3">
+                <input
+                    name="username"
+                    placeholder="Votre nom"
+                    required
+                    className="w-full p-2 border rounded"
+                />
+                <input
+                    name="password"
+                    type="password"
+                    placeholder="Votre mot de passe"
+                    required
+                    className="w-full p-2 border rounded"
+                />
+                <button
+                    type="submit"
+                    disabled={isPending}
+                    className={`w-full py-2 rounded ${isPending ? "bg-gray-400" : "bg-blue-500 text-white"
+                        }`}
+                >
+                    {isPending ? "Envoi en cours..." : "Envoyer"}
+                </button>
+            </form>
+            {feedback && <p className="mt-2 text-center text-green-500">{feedback}</p>}
+        </div>
     );
-  }
-  
+}
