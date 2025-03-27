@@ -19,4 +19,19 @@
             <button class="btn-secondary">S'inscrire</button>
         </a>
     {{/if}}
+
+    <h2>Nos Annonces</h2> <!-- Modifié de "Nos Annonces" à "Nos Éléments" -->
+    <ul>
+    {{#each elements}} <!-- Modifié de "annonces" à "elements" -->
+        <li>
+            <h3>{{titre}}</h3> <!-- Titre de l'élément -->
+            <p>{{description}}</p> <!-- Description de l'élément -->
+            <p>Prix : {{prix}} €</p> <!-- Prix de l'élément -->
+            <p>Superficie : {{superficie}} m²</p> <!-- Superficie de l'élément -->
+            <p>Chambres : {{chambres}}</p> <!-- Nombre de chambres -->
+            <p>Adresse : {{adresse}}</p> <!-- Adresse de l'élément -->
+            <p>Date de publication : {{datePublication}}</p> <!-- Date de publication -->
+        </li>
+    {{/each}}
+    </ul>
 </div>

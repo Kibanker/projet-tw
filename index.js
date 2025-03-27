@@ -9,6 +9,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const { engine } = require('express-handlebars');
 
+
 dotenv.config();
 
 const SECRET_KEY = process.env.SECRET_KEY || 'votre_cle_secrete';
@@ -68,13 +69,54 @@ connectDB().then(initData);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
 // Page d'accueil
 app.get('/', async (req, res) => {
-  res.status(200).render('home' ,{
+  try {
+    const elements = await Element.find(); // Récupère tous les éléments
+    res.status(200).render('home', {
       message: 'Bienvenue sur le site !',
       username: res.locals.username,
-  });
+      elements: elements // Passe les éléments à la vue
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des éléments' });
+  }
 });
+
+const initElements = async () => {
+  try {
+      await Element.deleteMany({}); // Supprime les anciens éléments
+      await Element.insertMany([ // Insère de nouveaux éléments
+          {
+              titre: 'Appartement T1 à vendre',
+              description: 'Appartement moderne, bien situé à Paris.',
+              prix: 150000,
+              superficie: 40,
+              chambres: 1,
+              photos: ['photo1.jpg', 'photo2.jpg'],
+              adresse: '123 Rue de Paris, Paris',
+              datePublication: new Date('2025-03-01')
+          },
+          {
+              titre: 'Maison F4 à vendre',
+              description: 'Grande maison avec jardin à Lyon.',
+              prix: 300000,
+              superficie: 120,
+              chambres: 4,
+              photos: ['photo1.jpg', 'photo2.jpg'],
+              adresse: '456 Rue du Lyon, Lyon',
+              datePublication: new Date('2025-03-05')
+          }
+      ]);
+      console.log('Éléments ajoutés avec succès');
+  } catch (error) {
+      console.error('Erreur lors de l’ajout des éléments:', error);
+  }
+};
+
+initElements(); // Appel à la fonction pour initialiser les éléments
 
 // Page de connexion
 app.get('/login', (req, res) => {

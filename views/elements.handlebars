@@ -1,7 +1,11 @@
-{{#each elements}}
+{{#each elements}} <!-- Assurez-vous d'utiliser "elements" -->
     <div class="element-item">
-        <h3>{{this.name}}</h3>
-        <p>Emplacement: {{this.location}}</p>
+        <h3>{{this.titre}}</h3> <!-- Utilisation du titre de l'élément -->
+        <p>Description: {{this.description}}</p> <!-- Description de l'élément -->
+        <p>Prix: {{this.prix}} €</p> <!-- Prix de l'élément -->
+        <p>Superficie: {{this.superficie}} m²</p> <!-- Superficie -->
+        <p>Chambres: {{this.chambres}}</p> <!-- Nombre de chambres -->
+        <p>Adresse: {{this.adresse}}</p> <!-- Adresse -->
+        <p>Date de publication: {{this.datePublication}}</p> <!-- Date de publication -->
     </div>
 {{/each}}
-
