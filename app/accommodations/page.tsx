@@ -36,10 +36,10 @@ export default function AccommodationsPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to like')
 
-      alert('Accommodation liked!')
+      alert('Logement liké !')
     } catch (err) {
       console.error(err)
-      alert('Please log in to like accommodations.')
+      alert('Connectez-vous pour liker un logement.')
     }
   }
 
