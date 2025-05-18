@@ -103,6 +103,9 @@ export default function ComparePage() {
 
     if (compareList.length > 0) {
       fetchAccommodations()
+    } else {
+      // S'assurer que loading est mis à false même si la liste est vide
+      setLoading(false)
     }
   }, [compareList])
 
