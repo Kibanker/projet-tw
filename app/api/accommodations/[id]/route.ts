@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { connectToDatabase } from '@/lib/mongodb'
+import dbConnect from '@/lib/mongodb'
+import mongoose from 'mongoose'
 import { ObjectId } from 'mongodb'
 
 export async function GET(
@@ -16,7 +17,8 @@ export async function GET(
       )
     }
 
-    const { db } = await connectToDatabase()
+    await dbConnect()
+    const db = mongoose.connection.db
     const accommodation = await db
       .collection('accommodations')
       .findOne({ _id: new ObjectId(id) })
