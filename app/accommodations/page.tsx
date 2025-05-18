@@ -4,6 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 
+
 type Accommodation = {
   _id: string
   title: string

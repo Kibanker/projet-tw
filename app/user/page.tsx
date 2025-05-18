@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 export default async function UserPage() {
   const user = await getCurrentUser()
@@ -21,9 +22,14 @@ export default async function UserPage() {
           <ul className="space-y-4 mt-2">
             {user.likedAccommodations.map((acc: any) => (
               <li key={acc._id} className="border p-4 rounded shadow-sm">
-                <div className="font-semibold text-md">{acc.title}</div>
+                <Link
+      href={`/accommodations/${acc._id}`}
+      className="font-semibold text-md text-blue-600 hover:underline"
+    >
+      {acc.title}
+    </Link>
                 <div className="text-sm text-gray-600">{acc.location}</div>
-                <div className="text-sm text-gray-800">Prix: {acc.price}</div>
+                <div className="text-sm text-gray-800">Prix: {acc.price}/mois</div>
                 <a
                   href={acc.url}
                   target="_blank"
