@@ -39,9 +39,14 @@ export default async function UserPage() {
         )}
       </div>
 
-      <form action="/api/user/logout" method="POST">
-        <button type="submit" className="mt-6 bg-red-500 text-white p-2 rounded">Logout</button>
-      </form>
+      <div className="flex space-x-4 mt-6">
+        <a href="/accommodations" className="bg-blue-500 text-white p-2 rounded inline-block text-center">
+          Voir les logements
+        </a>
+        <form action="/api/user/logout" method="POST">
+          <button type="submit" className="bg-red-500 text-white p-2 rounded">Logout</button>
+        </form>
+      </div>
     </div>
   )
 }

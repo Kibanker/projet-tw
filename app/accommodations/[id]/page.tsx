@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import Comments from '@/components/Comments'
 
 type Accommodation = {
   _id: string
@@ -165,6 +166,11 @@ export default function AccommodationDetailPage() {
             </button>
           </div>
         </div>
+      </div>
+      
+      {/* Section des commentaires */}
+      <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
+        <Comments accommodationId={id as string} />
       </div>
     </div>
   )
