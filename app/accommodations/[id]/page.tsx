@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import Comments from '@/components/Comments'
 
 type Accommodation = {
@@ -20,13 +21,35 @@ type Accommodation = {
 }
 
 // Dynamically import Map component with SSR disabled
-const Map = dynamic(() => import('../Map'), { ssr: false })
+const Map = dynamic(() => import('../Map'), { ssr: false, loading: () => (
+  <div className="h-64 bg-gray-200 flex items-center justify-center rounded-lg">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+)})
 
 export default function AccommodationDetailPage() {
   const { id } = useParams()
+  const router = useRouter()
   const [accommodation, setAccommodation] = useState<Accommodation | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Vérifier si l'utilisateur est connecté
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('/api/user/current')
+        const data = await response.json()
+        setIsLoggedIn(!!data.user)
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut de connexion:', error)
+        setIsLoggedIn(false)
+      }
+    }
+    
+    checkLoginStatus()
+  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -133,8 +156,8 @@ export default function AccommodationDetailPage() {
               <div className="h-64 rounded-lg overflow-hidden">
                 <Map 
                   accommodations={[accommodation]} 
-                  zoom={15}
                   className="h-full w-full"
+                  zoom={15}
                 />
               </div>
             </div>
@@ -171,6 +194,35 @@ export default function AccommodationDetailPage() {
       {/* Section des commentaires */}
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
         <Comments accommodationId={id as string} />
+      </div>
+      
+      {/* Barre de navigation */}
+      <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
+        <div className="flex justify-center space-x-4">
+          <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            Accueil
+          </Link>
+          
+          <Link href="/accommodations" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
+            Logements
+          </Link>
+          
+          <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+            Statistiques
+          </Link>
+          
+          {isLoggedIn ? (
+            <form action="/api/user/logout" method="POST" className="inline">
+              <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                Déconnexion
+              </button>
+            </form>
+          ) : (
+            <Link href="/login" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+              Connexion
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   )

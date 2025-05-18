@@ -3,6 +3,7 @@
 //useMemo est un hook qui sert à mémoriser une valeur calculée pour éviter de recalculer une valeur complexe à chaque rendu, à moins que ses dépendances aient changé.
 import { useEffect, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
 
 type Accommodation = {
@@ -32,6 +33,23 @@ export default function AccommodationsPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Vérifier si l'utilisateur est connecté
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('/api/user/current')
+        const data = await response.json()
+        setIsLoggedIn(!!data.user)
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut de connexion:', error)
+        setIsLoggedIn(false)
+      }
+    }
+    
+    checkLoginStatus()
+  }, [])
 
   // Charger les logements
   useEffect(() => {
@@ -244,6 +262,35 @@ export default function AccommodationsPage() {
 
       <div className="sticky top-4 h-[calc(100vh-2rem)]">
         <Map accommodations={filteredSortedAccommodations} />
+        
+        {/* Barre de navigation */}
+        <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
+          <div className="flex justify-center space-x-4">
+            <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+              Accueil
+            </Link>
+            
+            <Link href="/user" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+              Profil
+            </Link>
+            
+            <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+              Statistiques
+            </Link>
+            
+            {isLoggedIn ? (
+              <form action="/api/user/logout" method="POST" className="inline">
+                <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                  Déconnexion
+                </button>
+              </form>
+            ) : (
+              <Link href="/login" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
+                Connexion
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
