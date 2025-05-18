@@ -452,7 +452,9 @@ export default function StatisticsPage() {
             Logements
           </Link>
           
-
+          <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
+            Comparateur
+          </Link>
           
           {isLoggedIn ? (
             <form action="/api/user/logout" method="POST" className="inline">

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Comments from '@/components/Comments'
+import CompareButton from '@/components/CompareButton'
 
 type Accommodation = {
   _id: string
@@ -187,6 +188,8 @@ export default function AccommodationDetailPage() {
             >
               ❤️ Ajouter aux favoris
             </button>
+            
+            <CompareButton accommodationId={id as string} />
           </div>
         </div>
       </div>
@@ -209,6 +212,10 @@ export default function AccommodationDetailPage() {
           
           <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
             Statistiques
+          </Link>
+          
+          <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
+            Comparateur
           </Link>
           
           {isLoggedIn ? (
