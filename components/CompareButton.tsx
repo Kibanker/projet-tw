@@ -38,7 +38,7 @@ export default function CompareButton({ accommodationId }: CompareButtonProps) {
   return (
     <button
       onClick={toggleCompare}
-      className={`px-4 py-2 rounded-lg ${isInCompare ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-500 hover:bg-gray-600'} text-white transition-colors`}
+      className={`cursor-pointer px-4 py-2 rounded-lg ${isInCompare ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-500 hover:bg-gray-600'} text-white transition-colors`}
     >
       {isInCompare ? 'Retirer de la comparaison' : 'Ajouter à la comparaison'}
     </button>

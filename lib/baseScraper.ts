@@ -44,7 +44,9 @@ const annonceSchema = new Schema<IAnnonce>({
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-export const Annonce: Model<IAnnonce> = model<IAnnonce>('Annonce', annonceSchema);
+// Create the model with explicit collection name
+export const Annonce: Model<IAnnonce> = mongoose.models.Annonce || 
+  model<IAnnonce>('Annonce', annonceSchema, 'annonces');
 
 export abstract class BaseScraper {
   abstract readonly baseUrl: string;
@@ -80,43 +82,88 @@ export abstract class BaseScraper {
     }
   }
 
-  async saveAnnonce(annonceData: Omit<IAnnonce, keyof Document | 'lastScraped' | 'updatedAt' | 'source'> & { _id?: string; rawData?: { _id?: string } }) {
+  async saveAnnonce(annonceData: Omit<IAnnonce, keyof Document | 'lastScraped' | 'updatedAt' | 'source' | '_id' | 'rawData'> & { 
+    _id?: string | mongoose.Types.ObjectId;
+    rawData?: Record<string, unknown> | null;
+  }) {
     try {
       // Utiliser la connexion existante
       if (mongoose.connection.readyState !== 1) { // 1 = connected
         await dbConnect();
       }
       
-      // Extraire l'ID de l'annonce depuis les données brutes si disponible
-      const annonceId = annonceData.rawData?._id || annonceData.url.split('/').pop();
+      // Fonction pour valider et formater un ID
+      const formatId = (id: unknown): string | null => {
+        if (!id) return null;
+        const idStr = String(id).trim();
+        // Si l'ID est vide ou 'undefined', on retourne null
+        if (!idStr || idStr === 'undefined' || idStr === 'null') return null;
+        // Si l'ID est déjà un ObjectId valide, on le retourne tel quel
+        if (mongoose.Types.ObjectId.isValid(idStr)) return idStr;
+        // Sinon, on crée un nouvel ObjectId
+        return new mongoose.Types.ObjectId().toString();
+      };
       
-      if (!annonceId) {
-        throw new Error('Impossible de déterminer l\'ID de l\'annonce');
+      // Essayer de récupérer un ID valide depuis différentes sources
+      const possibleIds = [
+        annonceData._id,
+        annonceData.rawData?._id,
+        (typeof annonceData.url === 'string' ? annonceData.url.split('/').pop() : null),
+        (annonceData.rawData?.id ? String(annonceData.rawData.id) : null)
+      ];
+      
+      // Trouver le premier ID valide ou en générer un nouveau
+      let annonceIdStr = null;
+      for (const id of possibleIds) {
+        const formattedId = formatId(id);
+        if (formattedId) {
+          annonceIdStr = formattedId;
+          break;
+        }
+      }
+      
+      // Si aucun ID valide n'a été trouvé, en générer un nouveau
+      if (!annonceIdStr) {
+        annonceIdStr = new mongoose.Types.ObjectId().toString();
       }
       
       // Préparer les données à sauvegarder
       const dataToSave = {
         ...annonceData,
+        _id: annonceIdStr, // S'assurer que l'ID est défini
         source: this.source,
         lastScraped: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        // S'assurer que les champs requis sont définis
+        title: annonceData.title || 'Sans titre',
+        description: annonceData.description || 'Aucune description fournie',
+        price: annonceData.price || 0,
+        surface: annonceData.surface || 0,
+        url: annonceData.url || `${this.baseUrl}/annonces/${annonceIdStr}`
       };
+      
+      console.log('Tentative de sauvegarde de l\'annonce:', {
+        id: annonceIdStr,
+        title: dataToSave.title,
+        source: this.source
+      });
       
       // Mise à jour ou création de l'annonce en utilisant l'ID
       const result = await Annonce.findOneAndUpdate(
-        { _id: annonceId },
-        dataToSave,
+        { _id: annonceIdStr },
+        { $set: dataToSave },
         { 
           upsert: true, 
           new: true, 
-          setDefaultsOnInsert: true 
+          setDefaultsOnInsert: true,
+          runValidators: true
         }
       );
       
       if (!result) {
-        console.error('Échec de la mise à jour de l\'annonce:', annonceData.title);
+        console.error('❌ Échec de la mise à jour de l\'annonce:', dataToSave.title);
       } else {
-        console.log(`Annonce mise à jour: ${annonceData.title}`);
+        console.log(`✅ Annonce sauvegardée: ${dataToSave.title} (ID: ${result._id})`);
       }
       
       return result;
