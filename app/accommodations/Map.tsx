@@ -3,21 +3,8 @@
 import { useEffect, useState } from 'react'
 import 'leaflet/dist/leaflet.css'
 
-type Annonce = {
-  _id: string
-  title: string
-  url: string
-  latitude?: number
-  longitude?: number
-  address?: string
-  price?: number
-  surface?: number
-  rooms?: number
-  description?: string
-  source?: string
-  lastScraped?: string
-  updatedAt?: string
-}
+// Import the Annonce type from the page component to ensure consistency
+import type { Annonce } from './page'
 
 interface MapProps {
   accommodations: Annonce[]
@@ -27,10 +14,28 @@ interface MapProps {
 
 export default function Map({ accommodations, className, zoom = 12 }: MapProps) {
   const [isMounted, setIsMounted] = useState(false)
-  const [MapComponent, setMapComponent] = useState<React.ComponentType<any> | null>(null)
-  const [MarkerComponent, setMarkerComponent] = useState<React.ComponentType<any> | null>(null)
-  const [PopupComponent, setPopupComponent] = useState<React.ComponentType<any> | null>(null)
-  const [TileLayerComponent, setTileLayerComponent] = useState<React.ComponentType<any> | null>(null)
+  const [MapComponent, setMapComponent] = useState<React.ComponentType<React.PropsWithChildren<{ 
+    center: [number, number]
+    zoom: number 
+    style?: React.CSSProperties 
+    className?: string 
+  }>> | null>(null)
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type IconType = any; // Leaflet's icon type causes issues with TypeScript
+  
+  const [MarkerComponent, setMarkerComponent] = useState<React.ComponentType<{ 
+    position: [number, number]
+    icon: IconType
+    children?: React.ReactNode 
+  }> | null>(null)
+  
+  const [PopupComponent, setPopupComponent] = useState<React.ComponentType<React.PropsWithChildren<unknown>> | null>(null)
+  
+  const [TileLayerComponent, setTileLayerComponent] = useState<React.ComponentType<{ 
+    url: string
+    attribution: string 
+  }> | null>(null)
   const [leaflet, setLeaflet] = useState<typeof import('leaflet') | null>(null)
   
   useEffect(() => {
@@ -75,9 +80,11 @@ export default function Map({ accommodations, className, zoom = 12 }: MapProps) 
   )
   
   // Déterminer le centre de la carte
-  const center = validAccommodations.length > 0 && validAccommodations[0].latitude && validAccommodations[0].longitude
-    ? [validAccommodations[0].latitude, validAccommodations[0].longitude] 
-    : [48.8566, 2.3522]
+  const center: [number, number] = validAccommodations.length > 0 && 
+    validAccommodations[0].latitude !== undefined && 
+    validAccommodations[0].longitude !== undefined
+    ? [validAccommodations[0].latitude, validAccommodations[0].longitude] as [number, number]
+    : [48.8566, 2.3522] as [number, number]
   
   if (!MapComponent || !MarkerComponent || !PopupComponent || !TileLayerComponent || !defaultIcon) {
     return (

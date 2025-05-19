@@ -7,10 +7,10 @@ import Link from 'next/link'
 import Footer from '@/components/Footer'
 
 
-type Annonce = {
+export type Annonce = {
   _id: string
   title: string
-  url: string
+  url?: string
   latitude?: number
   longitude?: number
   address?: string
@@ -21,6 +21,12 @@ type Annonce = {
   source?: string
   lastScraped?: string
   updatedAt?: string
+  image?: string
+  rawData?: {
+    _id?: string
+    [key: string]: unknown
+  }
+  images?: string[]
 }
 
 type SortField = 'title' | 'price' | 'surface' | 'rooms'
@@ -114,23 +120,7 @@ export default function AccommodationsPage() {
     return sortDirection === 'asc' ? '↑' : '↓'
   }
 
-  const handleLike = async (id: string) => {
-    try {
-      const res = await fetch('/api/user/like', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accommodationId: id }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to like')
-
-      alert('Logement liké !')
-    } catch (err) {
-      console.error(err)
-      alert('Connectez-vous pour liker un logement.')
-    }
-  }
+  // Like functionality has been removed as it's not being used in the current implementation
   
   if (loading) {
     return (

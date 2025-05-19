@@ -331,7 +331,7 @@ export default function AccommodationDetailPage() {
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <div className="flex flex-wrap justify-between items-center">
               <a
-                href={url || '#'}
+                href={'https://example.com'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors inline-flex items-center"
@@ -346,7 +346,7 @@ export default function AccommodationDetailPage() {
               <div className="flex gap-4">
                 <button
                   onClick={handleLike}
-                  className="px-6 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors"
+                  className="cursor-pointer px-6 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors"
                 >
                   ❤️ Ajouter aux favoris
                 </button>
@@ -354,7 +354,7 @@ export default function AccommodationDetailPage() {
                 <CompareButton accommodationId={id as string} />
                 
                 <button 
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+                  className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                   onClick={() => window.history.back()}
                 >
                   Retour
