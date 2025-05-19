@@ -45,23 +45,6 @@ export default function AccommodationDetailPage() {
   const [accommodation, setAccommodation] = useState<Accommodation | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  // Vérifier si l'utilisateur est connecté
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const response = await fetch('/api/user/current')
-        const data = await response.json()
-        setIsLoggedIn(!!data.user)
-      } catch (error) {
-        console.error('Erreur lors de la vérification du statut de connexion:', error)
-        setIsLoggedIn(false)
-      }
-    }
-    
-    checkLoginStatus()
-  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -151,7 +134,7 @@ export default function AccommodationDetailPage() {
   }
 
   // Extraire les données nécessaires
-  const { title, price, surface, rooms, address, description, url, rawData } = accommodation;
+  const { title, price, surface, rooms, address, description, rawData } = accommodation;
   
   // Extraire les images et équipements de rawData s'ils existent, sinon utiliser les champs de premier niveau
   const images = Array.isArray(rawData?.images) 
@@ -197,7 +180,7 @@ export default function AccommodationDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* En-tête avec image et titre */}
@@ -329,73 +312,35 @@ export default function AccommodationDetailPage() {
           
           {/* Boutons d'action */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex flex-wrap justify-between items-center">
-              <a
-                href={'https://example.com'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors inline-flex items-center"
+            <div className="flex flex-wrap justify-end gap-4">
+              <button
+                onClick={handleLike}
+                className="group relative flex items-center px-6 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg overflow-hidden transition-all duration-300 hover:from-pink-600 hover:to-rose-600 hover:shadow-lg"
+              >
+                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-white group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium">Ajouter aux favoris</span>
+              </button>
+              
+              <CompareButton accommodationId={id as string} />
+              
+              <button 
+                className="flex items-center px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={() => window.history.back()}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                  <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                 </svg>
-                Voir l&apos;annonce originale
-              </a>
-              
-              <div className="flex gap-4">
-                <button
-                  onClick={handleLike}
-                  className="cursor-pointer px-6 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors"
-                >
-                  ❤️ Ajouter aux favoris
-                </button>
-                
-                <CompareButton accommodationId={id as string} />
-                
-                <button 
-                  className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
-                  onClick={() => window.history.back()}
-                >
-                  Retour
-                </button>
-              </div>
+                <span>Retour</span>
+              </button>
             </div>
           </div>
         </div>
         
-        {/* Barre de navigation */}
-        <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-              Accueil
-            </Link>
-            
-            <Link href="/accommodations" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
-              Logements
-            </Link>
-            
-            <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-              Statistiques
-            </Link>
-            
-            <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
-              Comparateur
-            </Link>
-            
-            {isLoggedIn ? (
-              <form action="/api/user/logout" method="POST" className="inline">
-                <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                  Déconnexion
-                </button>
-              </form>
-            ) : (
-              <Link href="/login" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
-                Connexion
-              </Link>
-            )}
-          </div>
-        </div>
+        {/* Espacement en bas de page */}
+        <div className="mt-8"></div>
       </div>
       <Footer />
     </div>

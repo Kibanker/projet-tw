@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+
 import dynamic from 'next/dynamic'
-import Footer from '@/components/Footer'
 
 // Types
 type Accommodation = {
@@ -34,39 +33,25 @@ const Map = dynamic(() => import('../accommodations/Map'), {
 })
 
 export default function ComparePage() {
-  const router = useRouter()
   const [compareList, setCompareList] = useState<string[]>([])
   const [accommodations, setAccommodations] = useState<Accommodation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  // Vérifier si l'utilisateur est connecté
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const response = await fetch('/api/user/current')
-        const data = await response.json()
-        setIsLoggedIn(!!data.user)
-      } catch (error) {
-        console.error('Erreur lors de la vérification du statut de connexion:', error)
-        setIsLoggedIn(false)
-      }
-    }
-    
-    checkLoginStatus()
-  }, [])
+
 
   // Charger la liste des logements à comparer depuis localStorage
   useEffect(() => {
-    const storedList = localStorage.getItem('compareList')
-    if (storedList) {
-      try {
-        const parsedList = JSON.parse(storedList)
-        setCompareList(Array.isArray(parsedList) ? parsedList : [])
-      } catch (err) {
-        console.error('Erreur lors du parsing de la liste de comparaison:', err)
-        setCompareList([])
+    if (typeof window !== 'undefined') {
+      const storedList = localStorage.getItem('compareList')
+      if (storedList) {
+        try {
+          const parsedList = JSON.parse(storedList)
+          setCompareList(Array.isArray(parsedList) ? parsedList : [])
+        } catch (err) {
+          console.error('Erreur lors du parsing de la liste de comparaison:', err)
+          setCompareList([])
+        }
       }
     }
   }, [])
@@ -114,14 +99,18 @@ export default function ComparePage() {
   // Supprimer un logement de la comparaison
   const removeFromCompare = (id: string) => {
     const newList = compareList.filter(itemId => itemId !== id)
-    localStorage.setItem('compareList', JSON.stringify(newList))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('compareList', JSON.stringify(newList))
+    }
     setCompareList(newList)
     setAccommodations(accommodations.filter(acc => acc._id !== id))
   }
 
   // Vider la liste de comparaison
   const clearCompareList = () => {
-    localStorage.setItem('compareList', JSON.stringify([]))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('compareList', JSON.stringify([]))
+    }
     setCompareList([])
     setAccommodations([])
   }
@@ -170,19 +159,15 @@ export default function ComparePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <div className="flex-grow flex justify-center items-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-        <Footer />
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-grow container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Comparateur de logements</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-center">Comparateur de logements</h1>
         
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -237,7 +222,7 @@ export default function ComparePage() {
                             </div>
                           ) : (
                             <div className="w-32 h-24 bg-gray-200 flex items-center justify-center mb-3 rounded-md">
-                              <span className="text-gray-400">Pas d'image</span>
+                              <span className="text-gray-400">Pas d&apos;image</span>
                             </div>
                           )}
                           <h3 className="font-medium text-center">{accommodation.title}</h3>
@@ -309,11 +294,11 @@ export default function ComparePage() {
                     {accommodations.map(accommodation => (
                       <td key={`${accommodation._id}-location`} className="p-4 border-b">
                         <div className="h-48 rounded-lg overflow-hidden">
-                          <Map 
-                            accommodations={[accommodation as any]} 
-                            className="h-full w-full"
-                            zoom={14}
-                          />
+                            <Map 
+                              accommodations={[accommodation]} 
+                              className="h-full w-full"
+                              zoom={14}
+                            />
                         </div>
                       </td>
                     ))}
@@ -361,40 +346,6 @@ export default function ComparePage() {
           </>
         )}
         
-        {/* Barre de navigation */}
-        <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
-          <div className="flex justify-center space-x-4">
-            <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-              Accueil
-            </Link>
-            
-            <Link href="/accommodations" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
-              Logements
-            </Link>
-            
-            <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-              Statistiques
-            </Link>
-            
-            <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
-              Comparateur
-            </Link>
-            
-            {isLoggedIn ? (
-              <form action="/api/user/logout" method="POST" className="inline">
-                <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                  Déconnexion
-                </button>
-              </form>
-            ) : (
-              <Link href="/login" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
-                Connexion
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-      <Footer />
     </div>
   )
 }

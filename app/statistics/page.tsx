@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Footer from '@/components/Footer'
 
 // Types
 type Accommodation = {
@@ -441,37 +440,6 @@ export default function StatisticsPage() {
           )}
         </div>
       </div>
-      
-      {/* Barre de navigation */}
-      <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
-        <div className="flex justify-center space-x-4">
-          <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-            Accueil
-          </Link>
-          
-          <Link href="/accommodations" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
-            Logements
-          </Link>
-          
-          <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
-            Comparateur
-          </Link>
-          
-          {isLoggedIn ? (
-            <form action="/api/user/logout" method="POST" className="inline">
-              <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                Déconnexion
-              </button>
-            </form>
-          ) : (
-            <Link href="/login" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-              Connexion
-            </Link>
-          )}
-        </div>
-      </div>
-      
-      <Footer />
     </div>
   )
 }
