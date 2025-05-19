@@ -190,7 +190,8 @@ export default function AccommodationDetailPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow container mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* En-tête avec image et titre */}
         <div className="relative">
@@ -388,6 +389,7 @@ export default function AccommodationDetailPage() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
