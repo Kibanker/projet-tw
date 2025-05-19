@@ -1,7 +1,7 @@
-// lib/models/Accommodation.ts
+// lib/models/Annonce.ts
 import mongoose, { Schema, Document } from 'mongoose'
 
-export interface IAccommodation extends Document {
+export interface IAnnonce extends Document {
   title: string
   url: string
   latitude?: number
@@ -17,7 +17,7 @@ export interface IAccommodation extends Document {
   rawData?: Record<string, unknown>
 }
 
-const AccommodationSchema: Schema = new Schema({
+const AnnonceSchema: Schema = new Schema({
   title: { type: String, required: true },
   url: { type: String, required: true },
   latitude: { type: Number },
@@ -29,14 +29,15 @@ const AccommodationSchema: Schema = new Schema({
   description: { type: String },
   source: { type: String, required: true },
   lastScraped: { type: Date, default: Date.now },
-  rawData: { type: Schema.Types.Mixed },
+  rawData: { type: Schema.Types.Mixed as unknown as Record<string, unknown> },
 }, { timestamps: true })
 
 // Créer un index sur l'URL pour des recherches plus rapides
-AccommodationSchema.index({ url: 1 })
+AnnonceSchema.index({ url: 1 })
 
 // Créer un index sur les coordonnées pour les recherches géospatiales
-AccommodationSchema.index({ location: '2dsphere' })
+AnnonceSchema.index({ location: '2dsphere' })
 
-export default mongoose.models.Accommodation || 
-  mongoose.model<IAccommodation>('Accommodation', AccommodationSchema)
+// Exporte uniquement le modèle Annonce
+export default mongoose.models.Annonce || 
+  mongoose.model<IAnnonce>('Annonce', AnnonceSchema)

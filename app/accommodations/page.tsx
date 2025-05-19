@@ -6,17 +6,20 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
 
-type Accommodation = {
+type Annonce = {
   _id: string
   title: string
   url: string
-  latitude: number
-  longitude: number
+  latitude?: number
+  longitude?: number
   address?: string
   price?: number
   surface?: number
   rooms?: number
   description?: string
+  source?: string
+  lastScraped?: string
+  updatedAt?: string
 }
 
 type SortField = 'title' | 'price' | 'surface' | 'rooms'
@@ -27,7 +30,7 @@ type SortDirection = 'asc' | 'desc'
 const Map = dynamic(() => import('./Map'), { ssr: false })
 
 export default function AccommodationsPage() {
-  const [accommodations, setAccommodations] = useState<Accommodation[]>([])
+  const [annonces, setAnnonces] = useState<Annonce[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [sortField, setSortField] = useState<SortField>('title')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -53,15 +56,16 @@ export default function AccommodationsPage() {
 
   // Charger les logements
   useEffect(() => {
-    const fetchAccommodations = async () => {
+    const fetchAnnonces = async () => {
       try {
         setLoading(true)
         const response = await fetch('/api/accommodations')
         if (!response.ok) {
-          throw new Error('Erreur lors du chargement des logements')
+          throw new Error('Erreur lors du chargement des annonces')
         }
         const data = await response.json()
-        setAccommodations(data)
+        setAnnonces(data)
+        setError(null)
       } catch (err) {
         console.error('Erreur:', err)
         setError('Impossible de charger les logements. Veuillez réessayer plus tard.')
@@ -70,16 +74,16 @@ export default function AccommodationsPage() {
       }
     }
 
-    fetchAccommodations()
+    fetchAnnonces()
   }, [])
 
-  // Filtrer et trier les logements
-  const filteredSortedAccommodations = useMemo(() => {
+  // Filtrer et trier les annonces
+  const filteredSortedAnnonces = useMemo(() => {
     //Filtrage
-    const filtered = accommodations.filter(acc => 
-      acc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (acc.address && acc.address.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (acc.description && acc.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filtered = annonces.filter(annonce => 
+      annonce.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (annonce.address && annonce.address.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (annonce.description && annonce.description.toLowerCase().includes(searchTerm.toLowerCase()))
     )
 
     //Tri
@@ -91,7 +95,7 @@ export default function AccommodationsPage() {
       if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
       return 0
     })
-  }, [accommodations, searchTerm, sortField, sortDirection])
+  }, [annonces, searchTerm, sortField, sortDirection])
 
   // Gérer le sens du tri en l'inversant quand l'utilisateur rappuie dessus
   const handleSort = (field: SortField) => {
@@ -214,7 +218,7 @@ export default function AccommodationsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSortedAccommodations.map((accommodation) => (
+              {filteredSortedAnnonces.map((accommodation) => (
                 <tr 
                   key={accommodation._id} 
                   className="hover:bg-gray-50"
@@ -252,7 +256,7 @@ export default function AccommodationsPage() {
             </tbody>
           </table>
           
-          {filteredSortedAccommodations.length === 0 && (
+          {filteredSortedAnnonces.length === 0 && (
             <div className="p-8 text-center text-gray-500">
               Aucun logement ne correspond à votre recherche.
             </div>
@@ -261,7 +265,7 @@ export default function AccommodationsPage() {
       </div>
 
       <div className="sticky top-4 h-[calc(100vh-2rem)]">
-        <Map accommodations={filteredSortedAccommodations} />
+        <Map accommodations={filteredSortedAnnonces} />
         
         {/* Barre de navigation */}
         <div className="mt-4 bg-white p-4 rounded-lg shadow-md">

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
-import mongoose from 'mongoose'
 import { ObjectId } from 'mongodb'
+import Annonce, { IAnnonce } from '@/lib/models/Annonce'
 
 export async function GET(
   request: Request,
@@ -18,25 +18,22 @@ export async function GET(
     }
 
     await dbConnect()
-    const db = mongoose.connection.db
-    const accommodation = await db
-      .collection('accommodations')
-      .findOne({ _id: new ObjectId(id) })
+    const annonce = await Annonce.findById(id).lean() as (IAnnonce & { _id: { toString: () => string } }) | null
 
-    if (!accommodation) {
+    if (!annonce) {
       return NextResponse.json(
-        { error: 'Logement non trouvé' },
+        { error: 'Annonce non trouvée' },
         { status: 404 }
       )
     }
 
     // Convertir l'ObjectId en chaîne pour la sérialisation
-    const serializedAccommodation = {
-      ...accommodation,
-      _id: accommodation._id.toString(),
+    const serializedAnnonce = {
+      ...annonce,
+      _id: annonce._id.toString(),
     }
 
-    return NextResponse.json(serializedAccommodation)
+    return NextResponse.json(serializedAnnonce)
   } catch (error) {
     console.error('Erreur lors de la récupération du logement:', error)
     return NextResponse.json(

@@ -1,21 +1,30 @@
 // app/api/accommodations/route.ts
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
-import Accommodation from '@/lib/models/Accommodation'
+import Annonce from '@/lib/models/Annonce'
 
 export async function GET() {
   try {
     await dbConnect()
-    const accommodations = await Accommodation.find({}).lean()
-
-    const cleaned = accommodations.map(({ _id, ...rest }) => ({
-      _id: _id.toString(),
-      ...rest,
-    }))
+    
+    // Récupérer les annonces et les convertir en objets JavaScript simples
+    const annonces = await Annonce.find({}).lean()
+    
+    // Convertir _id en string pour la sérialisation
+    const cleaned = annonces.map((annonce) => {
+      const annonceWithId = annonce as { _id: { toString: () => string }; [key: string]: unknown };
+      return {
+        ...annonceWithId,
+        _id: annonceWithId._id.toString(),
+      };
+    });
 
     return NextResponse.json(cleaned)
   } catch (error) {
     console.error('Error fetching accommodations:', error)
-    return NextResponse.json({ error: 'Failed to fetch accommodations' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch accommodations' },
+      { status: 500 }
+    )
   }
 }
