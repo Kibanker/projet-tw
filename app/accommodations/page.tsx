@@ -4,6 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 
 
 type Annonce = {
@@ -148,158 +149,161 @@ export default function AccommodationsPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Logements</h1>
-          <div className="relative w-64">
-            <input
-              type="text"
-              placeholder="Rechercher..."
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
-              >
-                ×
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-lg border shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSort('title')}
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">Logements</h1>
+            <div className="relative w-64">
+              <input
+                type="text"
+                placeholder="Rechercher..."
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                 >
-                  <div className="flex items-center">
-                    Titre
-                    <span className="ml-1">{renderSortIcon('title')}</span>
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSort('price')}
-                >
-                  <div className="flex items-center">
-                    Prix
-                    <span className="ml-1">{renderSortIcon('price')}</span>
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 hidden md:table-cell"
-                  onClick={() => handleSort('surface')}
-                >
-                  <div className="flex items-center">
-                    Surface
-                    <span className="ml-1">{renderSortIcon('surface')}</span>
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 hidden md:table-cell"
-                  onClick={() => handleSort('rooms')}
-                >
-                  <div className="flex items-center">
-                    Pièces
-                    <span className="ml-1">{renderSortIcon('rooms')}</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSortedAnnonces.map((accommodation) => (
-                <tr 
-                  key={accommodation._id} 
-                  className="hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div>
-                        <a
-                          href={`/accommodations/${accommodation._id}`}
-                          className="text-sm font-medium text-blue-600 hover:underline"
-                        >
-                          {accommodation.title}
-                        </a>
-                        <div className="text-sm text-gray-500">{accommodation.address}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {accommodation.price ? `${accommodation.price} €` : '-'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                    <div className="text-sm text-gray-900">
-                      {accommodation.surface ? `${accommodation.surface} m²` : '-'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                    <div className="text-sm text-gray-900">
-                      {accommodation.rooms || '-'}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          
-          {filteredSortedAnnonces.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
-              Aucun logement ne correspond à votre recherche.
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="sticky top-4 h-[calc(100vh-2rem)]">
-        <Map accommodations={filteredSortedAnnonces} />
-        
-        {/* Barre de navigation */}
-        <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
-          <div className="flex justify-center space-x-4">
-            <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-              Accueil
-            </Link>
-            
-            <Link href="/user" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
-              Profil
-            </Link>
-            
-            <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-              Statistiques
-            </Link>
-            
-            <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
-              Comparateur
-            </Link>
-            
-            {isLoggedIn ? (
-              <form action="/api/user/logout" method="POST" className="inline">
-                <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                  Déconnexion
+                  ×
                 </button>
-              </form>
-            ) : (
-              <Link href="/login" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
-                Connexion
-              </Link>
+              )}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-lg border shadow">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('title')}
+                  >
+                    <div className="flex items-center">
+                      Titre
+                      <span className="ml-1">{renderSortIcon('title')}</span>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('price')}
+                  >
+                    <div className="flex items-center">
+                      Prix
+                      <span className="ml-1">{renderSortIcon('price')}</span>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 hidden md:table-cell"
+                    onClick={() => handleSort('surface')}
+                  >
+                    <div className="flex items-center">
+                      Surface
+                      <span className="ml-1">{renderSortIcon('surface')}</span>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 hidden md:table-cell"
+                    onClick={() => handleSort('rooms')}
+                  >
+                    <div className="flex items-center">
+                      Pièces
+                      <span className="ml-1">{renderSortIcon('rooms')}</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredSortedAnnonces.map((accommodation) => (
+                  <tr 
+                    key={accommodation._id} 
+                    className="hover:bg-gray-50"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div>
+                          <a
+                            href={`/accommodations/${accommodation._id}`}
+                            className="text-sm font-medium text-blue-600 hover:underline"
+                          >
+                            {accommodation.title}
+                          </a>
+                          <div className="text-sm text-gray-500">{accommodation.address}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {accommodation.price ? `${accommodation.price} €` : '-'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                      <div className="text-sm text-gray-900">
+                        {accommodation.surface ? `${accommodation.surface} m²` : '-'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                      <div className="text-sm text-gray-900">
+                        {accommodation.rooms || '-'}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            {filteredSortedAnnonces.length === 0 && (
+              <div className="p-8 text-center text-gray-500">
+                Aucun logement ne correspond à votre recherche.
+              </div>
             )}
           </div>
         </div>
+
+        <div className="sticky top-4 h-[calc(100vh-2rem)]">
+          <Map accommodations={filteredSortedAnnonces} />
+          
+          {/* Barre de navigation */}
+          <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
+            <div className="flex justify-center space-x-4">
+              <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                Accueil
+              </Link>
+              
+              <Link href="/user" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                Profil
+              </Link>
+              
+              <Link href="/statistics" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                Statistiques
+              </Link>
+              
+              <Link href="/compare" className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors">
+                Comparateur
+              </Link>
+              
+              {isLoggedIn ? (
+                <form action="/api/user/logout" method="POST" className="inline">
+                  <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                    Déconnexion
+                  </button>
+                </form>
+              ) : (
+                <Link href="/login" className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
+                  Connexion
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }

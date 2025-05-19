@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 
 // Types
 type Accommodation = {
@@ -470,7 +471,7 @@ export default function StatisticsPage() {
         </div>
       </div>
       
-
+      <Footer />
     </div>
   )
 }
