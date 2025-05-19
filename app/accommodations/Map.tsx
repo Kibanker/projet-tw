@@ -109,12 +109,10 @@ export default function Map({ accommodations, className, zoom = 12 }: MapProps) 
               <strong>{accommodation.title}</strong>
               <br />
               <a
-                href={accommodation.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline"
+                href={`/accommodations/${accommodation._id}`}
+                className="text-blue-600 underline hover:text-blue-800"
               >
-                Voir l&apos;annonce
+                Voir les détails
               </a>
             </PopupComponent>
           </MarkerComponent>

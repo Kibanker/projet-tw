@@ -33,8 +33,8 @@ async function checkDatabase() {
     const count = await Annonce.countDocuments();
     console.log(`Nombre total d'annonces: ${count}`);
 
-    // Afficher les 5 premières annonces
-    const annonces = await Annonce.find({}, 'title price surface rooms address')
+    // Afficher les 5 premières annonces avec tous les champs
+    const annonces = await Annonce.find({})
       .sort({ updatedAt: -1 })
       .limit(5);
 

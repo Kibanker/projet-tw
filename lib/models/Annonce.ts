@@ -15,6 +15,8 @@ export interface IAnnonce extends Document {
   lastScraped: Date
   updatedAt: Date
   rawData?: Record<string, unknown>
+  equipments?: string[]
+  images?: string[]
 }
 
 const AnnonceSchema: Schema = new Schema({
@@ -30,6 +32,8 @@ const AnnonceSchema: Schema = new Schema({
   source: { type: String, required: true },
   lastScraped: { type: Date, default: Date.now },
   rawData: { type: Schema.Types.Mixed as unknown as Record<string, unknown> },
+  equipments: { type: [String], default: [] },
+  images: { type: [String], default: [] },
 }, { timestamps: true })
 
 // Créer un index sur l'URL pour des recherches plus rapides
