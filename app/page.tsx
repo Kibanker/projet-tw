@@ -41,6 +41,10 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 font-sans text-white">
       <div className="flex-grow flex flex-col items-center px-6 py-20 space-y-12">
         <div className="text-center space-y-6 max-w-4xl">
+           <h1 className="text-8xl font-bold text-white">
+            MAPIMO
+          </h1>
+          <br />
           <h1 className="text-5xl font-bold text-white">
             {!loading && user ? `Bonjour ${user.name} !` : "Bienvenue sur notre application immobilière"}
           </h1>
