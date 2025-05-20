@@ -45,6 +45,7 @@ export default function Home() {
             MAPIMO
           </h1>
           <br />
+          <br />
           <h1 className="text-5xl font-bold text-white">
             {!loading && user ? `Bonjour ${user.name} !` : "Bienvenue sur notre application immobilière"}
           </h1>
