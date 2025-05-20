@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaHeart } from 'react-icons/fa'
 import LikedAccommodations from './LikedAccommodations'
+import Footer from '../components/Footer'
 
 export default async function UserPage() {
   const user = await getCurrentUser()
@@ -91,6 +92,7 @@ export default async function UserPage() {
           <LikedAccommodations accommodations={user.likedAccommodations} />
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
