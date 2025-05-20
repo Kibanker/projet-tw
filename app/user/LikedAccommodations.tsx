@@ -1,6 +1,6 @@
 'use client';
 
-import { FaTimes, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaTimes, FaMapMarkerAlt } from 'react-icons/fa';
 import Link from 'next/link';
 
 interface Accommodation {
@@ -92,27 +92,9 @@ export default function LikedAccommodations({ accommodations }: LikedAccommodati
                       {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(acc.price)}/mois
                     </span>
                   )}
-                  {acc.surface && (
-                    <span className="mt-2 text-sm text-gray-500">
-                      {acc.surface} m²
-                    </span>
-                  )}
                 </div>
               </div>
             </div>
-            {acc.url && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <a 
-                  href={acc.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  <FaExternalLinkAlt className="h-3.5 w-3.5 mr-1.5" />
-                  Voir l&apos;annonce originale
-                </a>
-              </div>
-            )}
           </div>
         </div>
       ))}

@@ -156,7 +156,7 @@ export default function Comments({ accommodationId }: CommentsProps) {
           <button
             type="submit"
             disabled={isSubmitting || !newComment.trim()}
-            className={`self-end px-4 py-2 rounded-md text-white ${
+            className={`cursor-pointer self-end px-4 py-2 rounded-md text-white ${
               isSubmitting || !newComment.trim()
                 ? 'bg-blue-300 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700'

@@ -296,7 +296,6 @@ export default function AccommodationDetailPage() {
                 
                 {/* Commentaires */}
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold mb-4">Commentaires</h2>
                   <div className="bg-gray-50 p-6 rounded-lg">
                     <Comments accommodationId={id as string} />
                   </div>
