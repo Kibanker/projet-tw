@@ -53,12 +53,12 @@ export default function ContactPage() {
               <p className="text-gray-700">
                 Retrouvez notre projet sur GitHub :<br />
                 <a 
-                  href="https://github.com/Kibanker/projet-tw/tree/immo-app" 
+                  href="https://github.com/Kibanker/projet-tw/tree/mapimo" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
                 >
-                  https://github.com/Kibanker/projet-tw/tree/immo-app
+                  https://github.com/Kibanker/projet-tw/tree/mapimo
                 </a>
               </p>
             </section>
