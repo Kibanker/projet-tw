@@ -14,7 +14,7 @@ export async function GET() {
     
     await dbConnect()
     
-    const user = await User.findById(userId).select('name lastName email').lean()
+    const user = await User.findById(userId).select('name lastName email likedAccommodations').lean()
     
     if (!user) {
       return NextResponse.json({ user: null })
@@ -24,7 +24,8 @@ export async function GET() {
       user: {
         name: user.name,
         lastName: user.lastName,
-        email: user.email
+        email: user.email,
+        likedAccommodations: user.likedAccommodations
       }
     })
   } catch (error) {
