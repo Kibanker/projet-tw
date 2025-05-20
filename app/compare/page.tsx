@@ -229,7 +229,7 @@ export default function ComparePage() {
                           <h3 className="font-medium text-center">{accommodation.title}</h3>
                           <button
                             onClick={() => removeFromCompare(accommodation._id)}
-                            className="mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs hover:bg-gray-300 transition-colors"
+                            className="cursor-pointer mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs hover:bg-gray-300 transition-colors"
                           >
                             Retirer
                           </button>
@@ -319,7 +319,7 @@ export default function ComparePage() {
                   
                   {/* Lien vers l'annonce */}
                   <tr>
-                    <td className="p-4 border-b font-medium">Actions</td>
+                    <td className="p-4 border-b font-medium">Action</td>
                     {accommodations.map(accommodation => (
                       <td key={`${accommodation._id}-actions`} className="p-4 border-b text-center">
                         <div className="flex flex-col space-y-2">
@@ -329,14 +329,6 @@ export default function ComparePage() {
                           >
                             Voir le détail
                           </Link>
-                          <a 
-                            href={accommodation.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
-                          >
-                            Voir l'annonce originale
-                          </a>
                         </div>
                       </td>
                     ))}
