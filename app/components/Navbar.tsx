@@ -62,8 +62,8 @@ export default function Navbar() {
     <nav className={`${isHomePage ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-white'} shadow-lg transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
               <Link href="/">
                 <Image
                   src="/logo.png"
@@ -75,51 +75,52 @@ export default function Navbar() {
               </Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname === link.href
-                    ? isHomePage 
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-indigo-100 text-indigo-700'
-                    : isHomePage
-                    ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                    pathname === link.href
+                      ? isHomePage 
+                        ? 'bg-gray-800 text-white'
+                        : 'bg-indigo-100 text-indigo-700'
+                      : isHomePage
+                      ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          
+          <div className="hidden md:flex md:items-center">
             {loading ? (
               <div className="cursor-pointer w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
             ) : user ? (
-              <>
-                <button
-                  onClick={handleLogout}
-                  className="cursor-pointer ml-4 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Déconnexion
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="cursor-pointer px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Déconnexion
+              </button>
             ) : (
-              <>
+              <div className="flex space-x-2">
                 <Link
                   href="/login"
-                  className="ml-4 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Connexion
                 </Link>
                 <Link
                   href="/register"
-                  className="ml-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Inscription
                 </Link>
-              </>
+              </div>
             )}
-          </div>
           </div>
         </div>
       </div>

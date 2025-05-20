@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import Comments from '@/components/Comments';
-import CompareButton from '@/components/CompareButton';
-import Footer from '@/components/Footer';
+import Comments from '@/app/components/Comments';
+import CompareButton from '@/app/components/CompareButton';
+import Footer from '@/app/components/Footer';
 import toast from 'react-hot-toast'
 
 type RawData = {

@@ -3,7 +3,7 @@
 //useMemo est un hook qui sert à mémoriser une valeur calculée pour éviter de recalculer une valeur complexe à chaque rendu, à moins que ses dépendances aient changé.
 import { useEffect, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import Footer from '@/components/Footer'
+import Footer from '@/app/components/Footer'
 
 
 export type Annonce = {

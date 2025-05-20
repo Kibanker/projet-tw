@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Footer from '@/components/Footer'
+import Footer from '@/app/components/Footer'
 
 interface User {
   _id: string

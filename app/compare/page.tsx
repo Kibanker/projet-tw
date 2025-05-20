@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import dynamic from 'next/dynamic'
-import Footer from '@/components/Footer'
+import Footer from '@/app/components/Footer'
 
 // Types
 type Accommodation = {
