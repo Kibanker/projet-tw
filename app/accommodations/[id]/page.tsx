@@ -94,7 +94,7 @@ export default function AccommodationDetailPage() {
       });
       
       // Refresh the page to show the updated favorites
-      window.location.reload();
+      //window.location.reload();
       
     } catch (err) {
       console.error(err)
