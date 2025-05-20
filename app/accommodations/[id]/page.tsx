@@ -77,6 +77,7 @@ export default function AccommodationDetailPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accommodationId: accommodation._id }),
+        credentials: 'include' // Important for cookies to be sent
       })
 
       const data = await res.json()
@@ -91,6 +92,9 @@ export default function AccommodationDetailPage() {
           color: '#fff',
         },
       });
+      
+      // Refresh the page to show the updated favorites
+      window.location.reload();
       
     } catch (err) {
       console.error(err)

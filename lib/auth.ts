@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import dbConnect from './mongodb'
 import User from '@/models/User'
-import Annonce from '@/lib/models/Annonce'
 
 interface UserDocument {
   _id: { toString: () => string }
@@ -10,20 +9,15 @@ interface UserDocument {
   email: string
   phone: string
   address: string
-  likedAccommodations: string[]
-  [key: string]: unknown
-}
-
-interface AnnonceDocument {
-  _id: { toString: () => string }
-  title: string
-  address?: string
-  price?: number
-  url: string
-  surface?: number
-  rooms?: number
-  description?: string
-  [key: string]: unknown
+  likedAccommodations: Array<{
+    _id: { toString: () => string }
+    title?: string
+    address?: string
+    price?: number
+    surface?: number
+    url?: string
+    images?: string[]
+  }>
 }
 
 export async function getCurrentUser() {
@@ -34,46 +28,38 @@ export async function getCurrentUser() {
 
   try {
     await dbConnect()
-    const user = await User.findById(userId).lean() as UserDocument | null
+    
+    // Find user and populate the likedAccommodations
+    const user = await User.findById(userId)
+      .populate({
+        path: 'likedAccommodations',
+        model: 'Annonce',
+        select: 'title address price url surface images'
+      })
+      .lean()
 
     if (!user) return null
 
-    // First, ensure we have an array of valid ObjectIds
-    const accommodationIds = (user.likedAccommodations || []).filter(id => 
-      id && typeof id === 'string' && id.trim() !== ''
-    )
-
-    // Only try to find annonces if we have valid IDs
-    let likedAccommodations: AnnonceDocument[] = []
-    if (accommodationIds.length > 0) {
-      const results = await Annonce.find({
-        _id: { $in: accommodationIds }
-      }).lean().exec()
-      
-      // Type assertion to handle the lean document
-      likedAccommodations = results as unknown as AnnonceDocument[]
-    }
-
-    // Map the results, ensuring we have all required fields
-    const mappedAccommodations = likedAccommodations
-      .filter(acc => acc != null) // Filter out any null/undefined results
-      .map((acc) => ({
-        _id: acc._id?.toString() || '',
-        title: acc.title || 'Sans titre',
-        location: acc.address || 'Localisation inconnue',
-        price: acc.price || 0,
-        surface: acc.surface,
-        url: acc.url || '#',
-      }))
+    // Map the populated accommodations to the expected format
+    const userDoc = user as unknown as UserDocument
+    const likedAccommodations = (userDoc.likedAccommodations || []).map((acc) => ({
+      _id: acc._id?.toString(),
+      title: acc.title || 'Sans titre',
+      location: acc.address || 'Localisation inconnue',
+      price: acc.price || 0,
+      surface: acc.surface,
+      url: acc.url || '#',
+      images: acc.images || []
+    }))
 
     return {
-      _id: user._id?.toString() || '',
-      name: user.name || '',
-      lastName: user.lastName || '',
-      email: user.email || '',
-      phone: user.phone || '',
-      address: user.address || '',
-      likedAccommodations: mappedAccommodations
+      _id: userDoc._id?.toString() || '',
+      name: userDoc.name || '',
+      lastName: userDoc.lastName || '',
+      email: userDoc.email || '',
+      phone: userDoc.phone || '',
+      address: userDoc.address || '',
+      likedAccommodations
     }
   } catch (error) {
     console.error('Error in getCurrentUser:', error)
